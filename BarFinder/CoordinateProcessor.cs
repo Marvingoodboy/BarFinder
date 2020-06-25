@@ -8,36 +8,37 @@ using System.Net;
 
 namespace BarFinder
 {
-    class CordinateProcessor
+    class CoordinateProcessor
     {
         private const string GEOLOCATION_API_HOST = "https://api.mylnikov.org/geolocation/wifi?bssid=";
-        private const string BAR_DATABASE_PATH = @"C:\features.json";
 
-        private static Institutions DeserializeJsonFile()
+
+        public static List<Institutions> DeserializeJsonFile()
         {
-            string json = File.ReadAllText(BAR_DATABASE_PATH);
-            return JsonConvert.DeserializeObject<Institutions>(json);
+            string json = new DataProcessor().UnZipToMemory();
+
+            return JsonConvert.DeserializeObject<List<Institutions>>(json);
         }
 
-        private static List<Point> GetBarPoints(Institutions barCoordinates)
+        public static List<Point> GetBarPoints(List<Institutions> barCoordinates)
         {
             List<Point> point = new List<Point>();
-            foreach (Feature feature in barCoordinates.Features)
+            foreach (Institutions feature in barCoordinates)
             {
-                if (feature.Properties.Attributes.TypeObject.Equals("бар"))
+                if (feature.TypeObject.Equals("бар"))
                 {
                     point.Add(new Point()
                     {
-                        Name = feature.Properties.Attributes.Name,
-                        X = feature.Geometry.Coordinates[1],
-                        Y = feature.Geometry.Coordinates[0]
+                        Name = feature.Name,
+                        X = feature.GeoData.Coordinates[1],
+                        Y = feature.GeoData.Coordinates[0]
                     });
                 }
             }
             return point;
         }
 
-        private static MyLocation GetUserCoordinates()
+        public static MyLocation GetUserCoordinates()
         {
             string[] BSSID = null;
             foreach (WlanClient.WlanInterface wlanInterface in new WlanClient().Interfaces)

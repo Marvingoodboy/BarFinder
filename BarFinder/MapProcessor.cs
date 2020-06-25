@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace BarFinder
 {
-    public partial class Form1 : Form
+    public partial class MapProcessor : Form
     {
         private double userX;
         private double userY;
 
         private List<Point> barCoordinates;
 
-        public Form1()
+        public MapProcessor()
         {
             InitializeComponent();
             MyLocation currentLocation = CoordinateProcessor.GetUserCoordinates();
@@ -25,16 +25,16 @@ namespace BarFinder
             this.userX = currentLocation.Data.Lat;
             this.userY = currentLocation.Data.Lon;
 
-            Institutions institutions = CoordinateProcessor.DeserializeJsonFile();
+            List<Institutions> dataFromBarDataBase = CoordinateProcessor.DeserializeJsonFile();
 
-            this.barCoordinates = CoordinateProcessor.GetBarPoints(institutions);
+            this.barCoordinates = CoordinateProcessor.GetBarPoints(dataFromBarDataBase);
         }
 
         private void gMapControl1_Load(object sender, EventArgs e)
         {
             ////HardCode user coordinates
-            //userX = 0;
-            //userY = 0;
+            userX = 55.752160;
+            userY = 37.598279;
 
             //GMap settings
             gmap.Bearing = 0;
@@ -55,9 +55,7 @@ namespace BarFinder
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
             gmap.Position = new GMap.NET.PointLatLng(userX, userY);
 
-            var point = DeserializeJsonFile();
-
-            PutBarMarkersOnMap(point);
+            PutBarMarkersOnMap(barCoordinates);
 
             PutUserMarkerOnMap();
         }

@@ -1,6 +1,6 @@
 ﻿namespace BarFinder
 {
-    partial class Form1
+    partial class MapProcessor
     {
         /// <summary>
         /// Обязательная переменная конструктора.
